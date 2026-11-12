@@ -1,0 +1,794 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080914">
+  <meta name="description" content="Virtual Voice — turn text and audio into your voice output.">
+  <title>Virtual Voice — Your Voice, Your Way</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --background: #080914;
+      --surface: #111326;
+      --purple: #8b5cf6;
+      --blue: #3985ff;
+      --text: #f5f5ff;
+      --muted: #a3a6c2;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--background);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .navbar {
+      width: 100%;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8%;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      background: rgba(8,9,20,0.85);
+      backdrop-filter: blur(15px);
+      position: fixed;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      box-shadow: 0 0 25px rgba(139,92,246,0.35);
+      font-size: 20px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: white;
+    }
+
+    .nav-button {
+      padding: 11px 19px;
+      border-radius: 10px;
+      color: white !important;
+      background: linear-gradient(110deg, var(--purple), var(--blue));
+      font-weight: bold;
+    }
+
+    .hero {
+      min-height: 760px;
+      padding: 170px 8% 100px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 550px;
+      height: 550px;
+      background: #713bff;
+      filter: blur(180px);
+      opacity: 0.19;
+      top: 30px;
+      left: -180px;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      max-width: 610px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 15px;
+      border: 1px solid rgba(139,92,246,0.35);
+      background: rgba(139,92,246,0.1);
+      color: #c8b5ff;
+      border-radius: 30px;
+      font-size: 13px;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #9d7aff;
+      box-shadow: 0 0 10px #9d7aff;
+    }
+
+    h1 {
+      font-size: clamp(48px, 6vw, 76px);
+      line-height: 1.08;
+      letter-spacing: -3px;
+      margin-bottom: 25px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg, #b58aff, #579bff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-description {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+      max-width: 520px;
+      margin-bottom: 35px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px 24px;
+      border-radius: 11px;
+      font-size: 14px;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .button:hover {
+      transform: translateY(-3px);
+    }
+
+    .primary-button {
+      background: linear-gradient(110deg, var(--purple), var(--blue));
+      box-shadow: 0 8px 30px rgba(99,75,255,0.25);
+    }
+
+    .secondary-button {
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .hero-note {
+      color: #777b9a;
+      font-size: 12px;
+      margin-top: 22px;
+    }
+
+    /* App preview */
+
+    .preview-area {
+      flex: 1;
+      min-width: 300px;
+      max-width: 500px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .glow {
+      position: absolute;
+      inset: 10%;
+      background: linear-gradient(135deg, #743dff, #237bff);
+      filter: blur(100px);
+      opacity: 0.3;
+    }
+
+    .app-window {
+      position: relative;
+      background: #111426;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 30px 100px rgba(0,0,0,0.5);
+      transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
+    }
+
+    .window-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 22px;
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .window-dots span {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #777;
+    }
+
+    .window-dots span:first-child { background: #ff6b70; }
+    .window-dots span:nth-child(2) { background: #ffc85c; }
+    .window-dots span:nth-child(3) { background: #54d78b; }
+
+    .window-title {
+      color: #b9bdd6;
+      font-size: 12px;
+    }
+
+    .preview-label {
+      font-size: 12px;
+      color: #a9adca;
+      margin-bottom: 10px;
+    }
+
+    .fake-textbox {
+      min-height: 105px;
+      background: #090c19;
+      border: 1px solid rgba(139,92,246,0.3);
+      border-radius: 11px;
+      padding: 15px;
+      color: #d7d9ed;
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .preview-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .fake-select {
+      background: #20243b;
+      border-radius: 8px;
+      padding: 10px 13px;
+      color: #c8cbe0;
+      font-size: 12px;
+    }
+
+    .fake-play {
+      background: linear-gradient(110deg, var(--purple), var(--blue));
+      padding: 11px 18px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .waveform {
+      height: 65px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      overflow: hidden;
+      background: #0b0e1e;
+      border-radius: 10px;
+    }
+
+    .waveform span {
+      width: 4px;
+      border-radius: 5px;
+      background: linear-gradient(to top, #8052f5, #4b9bff);
+      opacity: 0.9;
+    }
+
+    .waveform span:nth-child(3n) { height: 38px; }
+    .waveform span:nth-child(3n + 1) { height: 20px; }
+    .waveform span:nth-child(3n + 2) { height: 50px; }
+
+    /* General sections */
+
+    section.content-section {
+      padding: 100px 8%;
+    }
+
+    .section-heading {
+      text-align: center;
+      max-width: 650px;
+      margin: 0 auto 55px;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(32px, 4vw, 45px);
+      letter-spacing: -1.5px;
+      margin-bottom: 16px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .features {
+      background: #0c0e1c;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .feature-card {
+      padding: 27px 23px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, #15182c, #101222);
+      border: 1px solid rgba(255,255,255,0.07);
+      transition: 0.25s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(139,92,246,0.5);
+      box-shadow: 0 15px 40px rgba(68,57,150,0.12);
+    }
+
+    .feature-icon {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: linear-gradient(135deg, rgba(139,92,246,0.25), rgba(57,133,255,0.2));
+      font-size: 22px;
+      margin-bottom: 22px;
+    }
+
+    .feature-card h3 {
+      font-size: 17px;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+
+    .step {
+      text-align: center;
+      padding: 25px;
+    }
+
+    .step-number {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 20px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      font-size: 20px;
+      font-weight: bold;
+      box-shadow: 0 8px 30px rgba(99,75,255,0.25);
+    }
+
+    .step h3 {
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+
+    .step p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .download-section {
+      padding: 70px 8% 110px;
+    }
+
+    .download-box {
+      max-width: 1000px;
+      margin: auto;
+      padding: 65px 35px;
+      text-align: center;
+      border-radius: 24px;
+      background:
+        radial-gradient(ellipse at top left, rgba(139,92,246,0.22), transparent 55%),
+        radial-gradient(ellipse at bottom right, rgba(57,133,255,0.2), transparent 55%),
+        #111326;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .download-box h2 {
+      font-size: clamp(30px, 4vw, 44px);
+      margin-bottom: 17px;
+    }
+
+    .download-box p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .coming-soon {
+      display: inline-block;
+      padding: 9px 15px;
+      color: #c9baff;
+      background: rgba(139,92,246,0.13);
+      border: 1px solid rgba(139,92,246,0.3);
+      border-radius: 30px;
+      font-size: 12px;
+    }
+
+    footer {
+      padding: 35px 8%;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-copy {
+      color: #777b98;
+      font-size: 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 22px;
+      color: #a3a6c2;
+      font-size: 13px;
+    }
+
+    .footer-links a:hover {
+      color: white;
+    }
+
+    @media (max-width: 950px) {
+      .hero {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-top: 150px;
+      }
+
+      .preview-area {
+        width: 100%;
+        max-width: 600px;
+        align-self: center;
+      }
+
+      .feature-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        padding: 0 5%;
+        height: 68px;
+      }
+
+      .nav-links {
+        gap: 13px;
+        font-size: 12px;
+      }
+
+      .nav-links a:not(.nav-button) {
+        display: none;
+      }
+
+      .hero {
+        padding: 130px 6% 70px;
+        min-height: auto;
+      }
+
+      h1 {
+        letter-spacing: -2px;
+      }
+
+      .hero-description {
+        font-size: 15px;
+      }
+
+      section.content-section {
+        padding: 75px 6%;
+      }
+
+      .feature-grid,
+      .how-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .app-window {
+        transform: none;
+        padding: 15px;
+      }
+
+      .download-section {
+        padding: 50px 6% 75px;
+      }
+
+      .download-box {
+        padding: 45px 20px;
+      }
+
+      footer {
+        padding: 30px 6%;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="navbar">
+    <a href="#" class="logo">
+      <div class="logo-icon">V</div>
+      Virtual Voice
+    </a>
+
+    <nav class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#download" class="nav-button">Get VV</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <div class="hero-content">
+        <div class="eyebrow">
+          <span></span>
+          A new way to use your voice
+        </div>
+
+        <h1>
+          Your voice.<br>
+          <span class="gradient-text">Your way.</span>
+        </h1>
+
+        <p class="hero-description">
+          Meet Virtual Voice — turn written text into speech,
+          play your audio files, and send sound through a virtual
+          microphone. All in one place.
+        </p>
+
+        <div class="hero-buttons">
+          <a href="#download" class="button primary-button">
+            Explore Virtual Voice →
+          </a>
+
+          <a href="#features" class="button secondary-button">
+            Discover features
+          </a>
+        </div>
+
+        <p class="hero-note">
+          Designed for creativity, communication, and more.
+        </p>
+      </div>
+
+      <div class="preview-area">
+        <div class="glow"></div>
+
+        <div class="app-window">
+          <div class="window-top">
+            <div class="window-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="window-title">Virtual Voice</div>
+            <div style="width:30px"></div>
+          </div>
+
+          <div class="preview-label">TEXT TO SPEECH</div>
+
+          <div class="fake-textbox">
+            Hello! Welcome to Virtual Voice.
+            Type something, choose a voice,
+            and turn your words into audio.
+          </div>
+
+          <div class="preview-controls">
+            <div class="fake-select">English voice ▾</div>
+            <div class="fake-play">▶ Generate</div>
+          </div>
+
+          <div class="preview-label">AUDIO PREVIEW</div>
+
+          <div class="waveform">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section features" id="features">
+      <div class="section-heading">
+        <h2>Everything you need.<br><span class="gradient-text">One application.</span></h2>
+        <p>
+          Virtual Voice brings useful audio tools together
+          in one simple experience.
+        </p>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h3>Text to Speech</h3>
+          <p>
+            Type your words and let Virtual Voice turn them
+            into spoken audio.
+          </p>
+        </article>
+
+        <article class="feature-card">
+          <div class="feature-icon">🎙️</div>
+          <h3>Virtual Microphone</h3>
+          <p>
+            Route generated or uploaded audio into compatible
+            apps using a virtual audio cable.
+          </p>
+        </article>
+
+        <article class="feature-card">
+          <div class="feature-icon">🎵</div>
+          <h3>Audio Uploads</h3>
+          <p>
+            Load an audio file and play it through your
+            selected audio output.
+          </p>
+        </article>
+
+        <article class="feature-card">
+          <div class="feature-icon">⚙️</div>
+          <h3>Audio Controls</h3>
+          <p>
+            Manage playback and choose the output device
+            for your audio.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="content-section" id="how-it-works">
+      <div class="section-heading">
+        <h2>Simple to use.</h2>
+        <p>
+          Getting started with Virtual Voice is straightforward.
+        </p>
+      </div>
+
+      <div class="how-grid">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Enter your text</h3>
+          <p>
+            Write the words you want Virtual Voice to speak,
+            or choose an audio file.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Generate or play</h3>
+          <p>
+            Turn your text into speech or play your
+            uploaded audio.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Choose your output</h3>
+          <p>
+            Send audio to your speakers or route it through
+            a virtual audio cable.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="download-section" id="download">
+      <div class="download-box">
+        <h2>Ready to meet <span class="gradient-text">Virtual Voice?</span></h2>
+
+        <p>
+          Your audio experience starts here.<br>
+          Follow the project as it grows.
+        </p>
+
+        <span class="coming-soon">
+          Windows release page — coming soon
+        </span>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <a href="#" class="logo">
+      <div class="logo-icon">V</div>
+      Virtual Voice
+    </a>
+
+    <div class="footer-copy">
+      © <span id="year"></span> Virtual Voice. All rights reserved.
+    </div>
+
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">About</a>
+      <a href="#download">Downloads</a>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent =
+      new Date().getFullYear();
+  </script>
+
+</body>
+</html>
