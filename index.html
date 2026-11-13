@@ -2,711 +2,1504 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Virtual Voice — Your Voice, Your Way</title>
-
-    <meta name="description" content="Virtual Voice is a text-to-speech and audio playback application. Turn text into speech and use audio through a virtual microphone.">
-
-    <!-- Virtual Voice Icon -->
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="apple-touch-icon" href="favicon.png">
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #090814;
-            color: #ffffff;
-            overflow-x: hidden;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .background-glow {
-            position: fixed;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            filter: blur(150px);
-            opacity: 0.17;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .glow-one {
-            background: #792cff;
-            top: -250px;
-            left: -200px;
-        }
-
-        .glow-two {
-            background: #176bff;
-            right: -300px;
-            top: 500px;
-        }
-
-        /* NAVBAR */
-
-        nav {
-            width: 100%;
-            padding: 20px 8%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(9, 8, 20, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 21px;
-            font-weight: bold;
-        }
-
-        .logo img {
-            width: 42px;
-            height: 42px;
-            object-fit: contain;
-        }
-
-        .logo span {
-            background: linear-gradient(90deg, #bd79ff, #668bff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-        }
-
-        .nav-links a {
-            color: #aaa6c0;
-            font-size: 14px;
-            transition: 0.2s;
-        }
-
-        .nav-links a:hover {
-            color: white;
-        }
-
-        .nav-button {
-            padding: 11px 20px;
-            border-radius: 10px;
-            background: linear-gradient(100deg, #852cff, #416dff);
-            color: white !important;
-            font-weight: bold;
-        }
-
-        /* HERO */
-
-        .hero {
-            min-height: 680px;
-            padding: 110px 8% 100px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 60px;
-        }
-
-        .hero-content {
-            max-width: 650px;
-        }
-
-        .tag {
-            display: inline-block;
-            padding: 9px 15px;
-            border: 1px solid rgba(165, 105, 255, 0.35);
-            background: rgba(130, 50, 255, 0.1);
-            color: #c39aff;
-            border-radius: 30px;
-            font-size: 13px;
-            margin-bottom: 25px;
-        }
-
-        .hero h1 {
-            font-size: clamp(48px, 6vw, 76px);
-            line-height: 1.08;
-            letter-spacing: -3px;
-            margin-bottom: 25px;
-        }
-
-        .gradient-text {
-            background: linear-gradient(100deg, #c16bff, #568bff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .hero p {
-            color: #aaa6c0;
-            font-size: 17px;
-            line-height: 1.8;
-            max-width: 540px;
-            margin-bottom: 35px;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 15px 25px;
-            border-radius: 12px;
-            font-weight: bold;
-            transition: 0.25s;
-        }
-
-        .button:hover {
-            transform: translateY(-3px);
-        }
-
-        .primary-button {
-            background: linear-gradient(100deg, #922cff, #416dff);
-            box-shadow: 0 5px 30px rgba(112, 58, 255, 0.25);
-        }
-
-        .secondary-button {
-            border: 1px solid #39334f;
-            background: rgba(255,255,255,0.03);
-        }
-
-        /* APP PREVIEW */
-
-        .preview {
-            width: 390px;
-            max-width: 100%;
-            padding: 25px;
-            border: 1px solid rgba(159, 117, 255, 0.25);
-            background: linear-gradient(145deg, #19152c, #101326);
-            border-radius: 22px;
-            box-shadow: 0 20px 80px rgba(70, 40, 180, 0.2);
-        }
-
-        .preview-top {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-
-        .preview-top img {
-            width: 35px;
-            height: 35px;
-            object-fit: contain;
-        }
-
-        .preview-top strong {
-            font-size: 17px;
-        }
-
-        .preview-label {
-            color: #aaa6c0;
-            font-size: 12px;
-            margin-bottom: 10px;
-        }
-
-        .preview-box {
-            padding: 16px;
-            border: 1px solid #39334f;
-            background: #0d0c1a;
-            border-radius: 12px;
-            color: #c9c4dc;
-            line-height: 1.6;
-            min-height: 90px;
-            font-size: 14px;
-        }
-
-        .preview-play {
-            margin-top: 20px;
-            padding: 15px;
-            text-align: center;
-            border-radius: 10px;
-            background: linear-gradient(100deg, #8c2eff, #416dff);
-            font-weight: bold;
-        }
-
-        .preview-status {
-            margin-top: 18px;
-            color: #9b95b4;
-            font-size: 12px;
-            text-align: center;
-        }
-
-        /* FEATURES */
-
-        section {
-            padding: 90px 8%;
-        }
-
-        .section-heading {
-            text-align: center;
-            margin-bottom: 55px;
-        }
-
-        .section-heading h2 {
-            font-size: clamp(30px, 4vw, 43px);
-            margin-bottom: 15px;
-        }
-
-        .section-heading p {
-            color: #aaa6c0;
-            line-height: 1.7;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 22px;
-        }
-
-        .feature-card {
-            padding: 30px;
-            background: linear-gradient(145deg, #171428, #10101d);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 18px;
-            transition: 0.25s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(151, 94, 255, 0.5);
-        }
-
-        .feature-icon {
-            font-size: 30px;
-            margin-bottom: 20px;
-        }
-
-        .feature-card h3 {
-            margin-bottom: 12px;
-            font-size: 20px;
-        }
-
-        .feature-card p {
-            color: #aaa6c0;
-            line-height: 1.7;
-            font-size: 14px;
-        }
-
-        /* HOW IT WORKS */
-
-        .steps {
-            max-width: 800px;
-            margin: auto;
-            display: grid;
-            gap: 20px;
-        }
-
-        .step {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            padding: 23px;
-            border: 1px solid rgba(255,255,255,0.07);
-            background: rgba(255,255,255,0.025);
-            border-radius: 15px;
-        }
-
-        .step-number {
-            min-width: 45px;
-            height: 45px;
-            display: grid;
-            place-items: center;
-            border-radius: 13px;
-            background: linear-gradient(135deg, #922cff, #416dff);
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .step p {
-            color: #aaa6c0;
-            margin-top: 6px;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        /* DOWNLOAD */
-
-        .download-section {
-            text-align: center;
-        }
-
-        .download-box {
-            max-width: 800px;
-            margin: auto;
-            padding: 60px 30px;
-            border: 1px solid rgba(158, 100, 255, 0.3);
-            border-radius: 25px;
-            background:
-                radial-gradient(circle at top left, rgba(132, 43, 255, 0.17), transparent 55%),
-                radial-gradient(circle at bottom right, rgba(55, 103, 255, 0.17), transparent 55%),
-                #121020;
-        }
-
-        .download-box h2 {
-            font-size: 38px;
-            margin-bottom: 15px;
-        }
-
-        .download-box p {
-            color: #aaa6c0;
-            line-height: 1.7;
-            margin-bottom: 30px;
-        }
-
-        .coming-soon {
-            display: inline-block;
-            padding: 12px 20px;
-            border: 1px solid rgba(173, 125, 255, 0.4);
-            border-radius: 10px;
-            color: #c39aff;
-            background: rgba(130, 50, 255, 0.1);
-            font-weight: bold;
-        }
-
-        /* FOOTER */
-
-        footer {
-            padding: 35px 8%;
-            border-top: 1px solid rgba(255,255,255,0.07);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        footer p {
-            color: #77728e;
-            font-size: 13px;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 20px;
-        }
-
-        .footer-links a {
-            color: #aaa6c0;
-            font-size: 13px;
-        }
-
-        .footer-links a:hover {
-            color: white;
-        }
-
-        /* MOBILE */
-
-        @media (max-width: 850px) {
-            .hero {
-                flex-direction: column;
-                align-items: flex-start;
-                padding-top: 75px;
-            }
-
-            .preview {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 600px) {
-            nav {
-                padding: 16px 5%;
-            }
-
-            .nav-links {
-                gap: 13px;
-            }
-
-            .nav-links a {
-                font-size: 12px;
-            }
-
-            .nav-links .nav-button {
-                padding: 9px 12px;
-            }
-
-            .logo {
-                font-size: 17px;
-                gap: 7px;
-            }
-
-            .logo img {
-                width: 34px;
-                height: 34px;
-            }
-
-            .hero {
-                padding: 75px 6%;
-                gap: 45px;
-            }
-
-            .hero h1 {
-                letter-spacing: -2px;
-            }
-
-            section {
-                padding: 70px 6%;
-            }
-
-            .features {
-                grid-template-columns: 1fr;
-            }
-
-            .download-box h2 {
-                font-size: 30px;
-            }
-
-            footer {
-                padding: 30px 6%;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Virtual Voice — Your Voice, Your Way</title>
+<meta name="description" content="Discover Virtual Voice. Turn text into speech, play audio files and explore your voice experience.">
+
+<link rel="icon" type="image/png" href="favicon.png">
+
+<style>
+:root {
+    --bg: #090814;
+    --panel: #151229;
+    --panel2: #1c1834;
+    --purple: #a34cff;
+    --blue: #5688ff;
+    --text: #ffffff;
+    --muted: #aaa5c1;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+}
+
+button, input, textarea, select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* BACKGROUND */
+
+.background-glow {
+    position: fixed;
+    width: 550px;
+    height: 550px;
+    border-radius: 50%;
+    filter: blur(140px);
+    opacity: .18;
+    pointer-events: none;
+    z-index: -2;
+    animation: glowMove 12s ease-in-out infinite alternate;
+}
+
+.glow-one {
+    background: #842cff;
+    top: -250px;
+    left: -200px;
+}
+
+.glow-two {
+    background: #176bff;
+    right: -300px;
+    top: 500px;
+    animation-delay: -5s;
+}
+
+@keyframes glowMove {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(80px, 60px) scale(1.2); }
+}
+
+/* FLOATING PARTICLES */
+
+#particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    bottom: -30px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #a56aff;
+    box-shadow: 0 0 15px #9255ff;
+    opacity: 0;
+    animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+    }
+    15% { opacity: .7; }
+    85% { opacity: .5; }
+    100% {
+        transform: translateY(-110vh) translateX(70px);
+        opacity: 0;
+    }
+}
+
+/* NAVBAR */
+
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 17px 8%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(9,8,20,.86);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-weight: bold;
+    font-size: 21px;
+}
+
+.logo img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
+.gradient-text {
+    background: linear-gradient(100deg, #c16bff, #568bff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 27px;
+}
+
+.nav-links a {
+    color: var(--muted);
+    font-size: 14px;
+    transition: .2s;
+}
+
+.nav-links a:hover {
+    color: white;
+}
+
+.nav-download {
+    padding: 11px 19px;
+    border-radius: 10px;
+    background: linear-gradient(100deg, #922cff, #416dff);
+    color: white !important;
+}
+
+/* HERO */
+
+.hero {
+    min-height: 680px;
+    padding: 110px 8%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 60px;
+}
+
+.hero-content {
+    max-width: 650px;
+    animation: slideIn .9s ease both;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(35px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tag {
+    display: inline-block;
+    padding: 9px 15px;
+    border: 1px solid rgba(165,105,255,.35);
+    background: rgba(130,50,255,.1);
+    color: #c39aff;
+    border-radius: 30px;
+    font-size: 13px;
+    margin-bottom: 25px;
+}
+
+.hero h1 {
+    font-size: clamp(48px, 6vw, 76px);
+    line-height: 1.08;
+    letter-spacing: -3px;
+    margin-bottom: 25px;
+}
+
+.hero p {
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.8;
+    max-width: 530px;
+    margin-bottom: 32px;
+}
+
+.hero-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.button {
+    display: inline-block;
+    padding: 15px 24px;
+    border-radius: 12px;
+    font-weight: bold;
+    transition: .25s;
+    border: none;
+}
+
+.button:hover {
+    transform: translateY(-4px);
+}
+
+.primary {
+    background: linear-gradient(100deg, #922cff, #416dff);
+    box-shadow: 0 5px 30px rgba(112,58,255,.25);
+    color: white;
+}
+
+.secondary {
+    border: 1px solid #39334f;
+    background: rgba(255,255,255,.03);
+}
+
+/* HERO PREVIEW */
+
+.preview {
+    width: 380px;
+    max-width: 100%;
+    padding: 25px;
+    border: 1px solid rgba(159,117,255,.25);
+    background: linear-gradient(145deg, #19152c, #101326);
+    border-radius: 22px;
+    box-shadow: 0 20px 80px rgba(70,40,180,.2);
+    animation: previewFloat 5s ease-in-out infinite;
+}
+
+@keyframes previewFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+.preview-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.preview-top img {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+}
+
+.preview-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+}
+
+.preview-box {
+    background: #0d0c1a;
+    border: 1px solid #39334f;
+    border-radius: 12px;
+    padding: 16px;
+    min-height: 90px;
+    color: #c9c4dc;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.preview-play {
+    margin-top: 18px;
+    padding: 14px;
+    text-align: center;
+    border-radius: 10px;
+    background: linear-gradient(100deg, #8c2eff, #416dff);
+    font-weight: bold;
+}
+
+.preview-status {
+    margin-top: 17px;
+    color: #9b95b4;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* SECTIONS */
+
+section {
+    padding: 90px 8%;
+}
+
+.section-heading {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.section-heading h2 {
+    font-size: clamp(30px, 4vw, 43px);
+    margin-bottom: 14px;
+}
+
+.section-heading p {
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+/* REVEAL ANIMATIONS */
+
+.reveal {
+    opacity: 0;
+    transform: translateY(35px);
+    transition: opacity .8s ease, transform .8s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* FEATURES */
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.feature-card {
+    padding: 30px;
+    background: linear-gradient(145deg, #171428, #10101d);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 18px;
+    transition: .3s;
+}
+
+.feature-card:hover {
+    transform: translateY(-7px);
+    border-color: rgba(151,94,255,.5);
+    box-shadow: 0 15px 40px rgba(100,50,200,.12);
+}
+
+.feature-icon {
+    font-size: 30px;
+    margin-bottom: 18px;
+}
+
+.feature-card h3 {
+    margin-bottom: 12px;
+}
+
+.feature-card p {
+    color: var(--muted);
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+/* INTERACTIVE VV */
+
+.demo-section {
+    background: linear-gradient(180deg, transparent, rgba(87,44,160,.07), transparent);
+}
+
+.demo-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+    background: linear-gradient(145deg, #19152e, #100f20);
+    border: 1px solid rgba(164,100,255,.28);
+    border-radius: 22px;
+    box-shadow: 0 20px 70px rgba(65,35,150,.13);
+}
+
+.demo-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.demo-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.demo-brand img {
+    width: 43px;
+    height: 43px;
+    object-fit: contain;
+}
+
+.demo-brand p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.demo-status {
+    font-size: 12px;
+    color: #91e5b3;
+    padding: 8px 12px;
+    border-radius: 20px;
+    background: rgba(70,200,120,.1);
+}
+
+.demo-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+}
+
+.tab {
+    padding: 11px 17px;
+    background: #211c38;
+    border: 1px solid #38304f;
+    color: var(--muted);
+    border-radius: 9px;
+}
+
+.tab.active {
+    background: linear-gradient(100deg, #8134d8, #435fda);
+    color: white;
+    border-color: transparent;
+}
+
+.demo-panel {
+    display: none;
+}
+
+.demo-panel.active {
+    display: block;
+    animation: slideIn .35s ease both;
+}
+
+.field-label {
+    display: block;
+    font-size: 13px;
+    color: #c5bddc;
+    margin-bottom: 10px;
+}
+
+#demoText {
+    width: 100%;
+    min-height: 145px;
+    resize: vertical;
+    background: #0c0b18;
+    border: 1px solid #39334f;
+    border-radius: 12px;
+    padding: 16px;
+    color: white;
+    outline: none;
+    line-height: 1.6;
+}
+
+#demoText:focus {
+    border-color: #9554ff;
+    box-shadow: 0 0 0 3px rgba(149,84,255,.1);
+}
+
+#demoText::placeholder {
+    color: #6f6986;
+}
+
+.demo-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.control-group select {
+    width: 100%;
+    padding: 12px;
+    color: white;
+    background: #0c0b18;
+    border: 1px solid #39334f;
+    border-radius: 9px;
+    outline: none;
+}
+
+.control-group input[type="range"] {
+    width: 100%;
+    accent-color: #a34cff;
+}
+
+.range-value {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.demo-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.demo-button {
+    padding: 12px 19px;
+    border: 1px solid #40365f;
+    border-radius: 10px;
+    background: #211c38;
+    color: white;
+    transition: .2s;
+}
+
+.demo-button:hover {
+    border-color: #a34cff;
+    transform: translateY(-2px);
+}
+
+.demo-button.main {
+    background: linear-gradient(100deg, #922cff, #416dff);
+    border: none;
+}
+
+.demo-message {
+    min-height: 20px;
+    margin-top: 17px;
+    color: #a9a2c3;
+    font-size: 13px;
+}
+
+/* AUDIO UPLOAD */
+
+.upload-area {
+    border: 2px dashed #57427d;
+    background: rgba(130,70,255,.05);
+    border-radius: 15px;
+    padding: 35px 20px;
+    text-align: center;
+    transition: .2s;
+}
+
+.upload-area:hover {
+    border-color: #a34cff;
+    background: rgba(130,70,255,.1);
+}
+
+.upload-area input {
+    display: none;
+}
+
+.upload-icon {
+    font-size: 40px;
+    margin-bottom: 13px;
+}
+
+.upload-area p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 9px;
+}
+
+.file-name {
+    margin-top: 16px;
+    color: #c39aff;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+#uploadedAudio {
+    display: none;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.upload-volume {
+    margin-top: 20px;
+}
+
+/* HOW IT WORKS */
+
+.steps {
+    max-width: 800px;
+    margin: auto;
+    display: grid;
+    gap: 20px;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 23px;
+    border: 1px solid rgba(255,255,255,.07);
+    background: rgba(255,255,255,.025);
+    border-radius: 15px;
+}
+
+.step-number {
+    min-width: 45px;
+    height: 45px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #922cff, #416dff);
+    font-weight: bold;
+}
+
+.step p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 6px;
+    line-height: 1.6;
+}
+
+/* DOWNLOAD */
+
+.download-section {
+    text-align: center;
+}
+
+.download-box {
+    max-width: 800px;
+    margin: auto;
+    padding: 60px 30px;
+    border: 1px solid rgba(158,100,255,.3);
+    border-radius: 25px;
+    background:
+        radial-gradient(circle at top left, rgba(132,43,255,.17), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(55,103,255,.17), transparent 55%),
+        #121020;
+}
+
+.download-box h2 {
+    font-size: 38px;
+    margin-bottom: 15px;
+}
+
+.download-box p {
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+.coming-soon {
+    display: inline-block;
+    padding: 12px 20px;
+    border: 1px solid rgba(173,125,255,.4);
+    border-radius: 10px;
+    color: #c39aff;
+    background: rgba(130,50,255,.1);
+    font-weight: bold;
+}
+
+/* MUSIC PLAYER */
+
+#musicControls {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    background: rgba(23,19,43,.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid #7040d9;
+    border-radius: 14px;
+    box-shadow: 0 8px 35px rgba(0,0,0,.3);
+}
+
+#musicToggle {
+    border: none;
+    background: none;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+#musicVolume {
+    width: 85px;
+    accent-color: #9855ff;
+}
+
+/* FOOTER */
+
+footer {
+    padding: 35px 8%;
+    border-top: 1px solid rgba(255,255,255,.07);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+footer p {
+    color: #77728e;
+    font-size: 13px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-links a {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 850px) {
+    .hero {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-top: 75px;
+    }
+
+    .preview {
+        width: 100%;
+    }
+}
+
+@media(max-width: 600px) {
+    nav {
+        padding: 14px 5%;
+    }
+
+    .nav-links {
+        gap: 12px;
+    }
+
+    .nav-links a {
+        font-size: 11px;
+    }
+
+    .nav-links .nav-download {
+        padding: 9px 10px;
+    }
+
+    .logo {
+        font-size: 16px;
+        gap: 7px;
+    }
+
+    .logo img {
+        width: 34px;
+        height: 34px;
+    }
+
+    .hero {
+        padding: 75px 6%;
+    }
+
+    section {
+        padding: 70px 6%;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+    }
+
+    .demo-container {
+        padding: 19px;
+    }
+
+    .demo-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .step {
+        align-items: flex-start;
+    }
+
+    .download-box h2 {
+        font-size: 30px;
+    }
+
+    #musicControls {
+        right: 10px;
+        bottom: 10px;
+        padding: 10px;
+    }
+
+    #musicVolume {
+        width: 65px;
+    }
+
+    footer {
+        padding: 30px 6%;
+    }
+}
+
+@media(prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
+</style>
 </head>
 
 <body>
 
-    <div class="background-glow glow-one"></div>
-    <div class="background-glow glow-two"></div>
+<div class="background-glow glow-one"></div>
+<div class="background-glow glow-two"></div>
+<div id="particles"></div>
 
-    <!-- NAVIGATION -->
+<!-- NAVIGATION -->
 
-    <nav>
-        <a href="#" class="logo">
-            <img src="favicon.png" alt="Virtual Voice logo">
-            <span>Virtual Voice</span>
-        </a>
+<nav>
+    <a href="#" class="logo">
+        <img src="favicon.png" alt="Virtual Voice">
+        <span class="gradient-text">Virtual Voice</span>
+    </a>
 
-        <div class="nav-links">
-            <a href="#features">Features</a>
-            <a href="#about">About</a>
-            <a href="#download" class="nav-button">Download</a>
-        </div>
-    </nav>
+    <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#demo">Try VV</a>
+        <a href="#about">About</a>
+        <a href="#download" class="nav-download">Download</a>
+    </div>
+</nav>
 
-    <!-- HERO -->
+<!-- HERO -->
 
-    <main>
-        <div class="hero">
+<main>
 
-            <div class="hero-content">
+<div class="hero">
 
-                <div class="tag">✦ Your voice. Your way.</div>
+    <div class="hero-content">
 
-                <h1>
-                    Give your words a
-                    <span class="gradient-text">voice.</span>
-                </h1>
+        <div class="tag">✦ Your voice. Your way.</div>
 
-                <p>
-                    Meet Virtual Voice — a simple application that turns
-                    written text and audio files into voice output.
-                    Create your audio experience your way.
-                </p>
+        <h1>
+            Give your words a
+            <span class="gradient-text" id="typedText"></span>
+        </h1>
 
-                <div class="hero-buttons">
-                    <a href="#download" class="button primary-button">
-                        Get Virtual Voice →
-                    </a>
+        <p>
+            Meet Virtual Voice — an application that turns written
+            text and audio files into voice output.
+            Create your audio experience your way.
+        </p>
 
-                    <a href="#features" class="button secondary-button">
-                        Explore Features
-                    </a>
-                </div>
-
-            </div>
-
-            <!-- APP PREVIEW -->
-
-            <div class="preview">
-
-                <div class="preview-top">
-                    <img src="favicon.png" alt="">
-                    <strong>Virtual Voice</strong>
-                </div>
-
-                <div class="preview-label">TEXT TO SPEECH</div>
-
-                <div class="preview-box">
-                    Hello! Welcome to Virtual Voice.
-                    Your words can become audio with just a few clicks.
-                </div>
-
-                <div class="preview-play">
-                    ▶ Generate Speech
-                </div>
-
-                <div class="preview-status">
-                    ● Virtual Voice — App Preview
-                </div>
-
-            </div>
-
+        <div class="hero-buttons">
+            <a href="#demo" class="button primary">Try Virtual Voice →</a>
+            <a href="#features" class="button secondary">Explore Features</a>
         </div>
 
-        <!-- FEATURES -->
+    </div>
 
-        <section id="features">
+    <div class="preview">
 
-            <div class="section-heading">
-                <h2>Everything you need.</h2>
-                <p>Discover what makes Virtual Voice special.</p>
-            </div>
-
-            <div class="features">
-
-                <div class="feature-card">
-                    <div class="feature-icon">🎙️</div>
-                    <h3>Virtual Microphone</h3>
-                    <p>
-                        Route Virtual Voice audio through a virtual
-                        audio device for use in supported applications.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">🔊</div>
-                    <h3>Text to Speech</h3>
-                    <p>
-                        Type your text and turn it into spoken audio
-                        using text-to-speech technology.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">📁</div>
-                    <h3>Audio Uploads</h3>
-                    <p>
-                        Load your own audio files and use them
-                        with Virtual Voice.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="feature-icon">⚙️</div>
-                    <h3>Audio Controls</h3>
-                    <p>
-                        Manage your voice output and customize
-                        your audio experience.
-                    </p>
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- HOW IT WORKS -->
-
-        <section id="about">
-
-            <div class="section-heading">
-                <h2>How does it work?</h2>
-                <p>Getting started is simple.</p>
-            </div>
-
-            <div class="steps">
-
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div>
-                        <h3>Enter your text or upload audio</h3>
-                        <p>
-                            Choose what you want Virtual Voice to play.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div>
-                        <h3>Generate or play</h3>
-                        <p>
-                            Turn text into speech or play your
-                            uploaded audio.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div>
-                        <h3>Choose your audio output</h3>
-                        <p>
-                            Use a compatible virtual audio device
-                            to route audio into other applications.
-                        </p>
-                    </div>
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- DOWNLOAD -->
-
-        <section id="download" class="download-section">
-
-            <div class="download-box">
-
-                <h2>
-                    Ready for a new
-                    <span class="gradient-text">voice?</span>
-                </h2>
-
-                <p>
-                    Virtual Voice is getting ready.
-                    Stay tuned for the official release!
-                </p>
-
-                <div class="coming-soon">
-                    Windows version — Coming Soon
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-    <!-- FOOTER -->
-
-    <footer>
-
-        <p>© 2026 Virtual Voice. All rights reserved.</p>
-
-        <div class="footer-links">
-            <a href="#about">About</a>
-            <a href="#features">Features</a>
-            <a href="#download">Download</a>
+        <div class="preview-top">
+            <img src="favicon.png" alt="">
+            <strong>Virtual Voice</strong>
         </div>
 
-    </footer>
+        <div class="preview-label">TEXT TO SPEECH</div>
+
+        <div class="preview-box">
+            Hello! Welcome to Virtual Voice.
+            Your words can become audio with just a few clicks.
+        </div>
+
+        <div class="preview-play">▶ Generate Speech</div>
+
+        <div class="preview-status">● Virtual Voice — Website Preview</div>
+
+    </div>
+
+</div>
+
+<!-- FEATURES -->
+
+<section id="features" class="reveal">
+
+    <div class="section-heading">
+        <h2>Everything you need.</h2>
+        <p>Discover what makes Virtual Voice special.</p>
+    </div>
+
+    <div class="features">
+
+        <div class="feature-card">
+            <div class="feature-icon">🎙️</div>
+            <h3>Virtual Microphone</h3>
+            <p>Route audio through a compatible virtual audio device in the Windows application.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🔊</div>
+            <h3>Text to Speech</h3>
+            <p>Turn written text into spoken audio with text-to-speech technology.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📁</div>
+            <h3>Audio Uploads</h3>
+            <p>Load your own audio files and play them with Virtual Voice.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">⚙️</div>
+            <h3>Audio Controls</h3>
+            <p>Manage your voice output and customize your audio experience.</p>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- INTERACTIVE VIRTUAL VOICE -->
+
+<section id="demo" class="demo-section reveal">
+
+    <div class="section-heading">
+        <h2>Try <span class="gradient-text">Virtual Voice.</span></h2>
+        <p>Experience a small browser-based demo right here on the website.</p>
+    </div>
+
+    <div class="demo-container">
+
+        <div class="demo-top">
+
+            <div class="demo-brand">
+                <img src="favicon.png" alt="">
+                <div>
+                    <strong>Virtual Voice Demo</strong>
+                    <p>Browser edition</p>
+                </div>
+            </div>
+
+            <div class="demo-status" id="demoStatus">● Ready</div>
+
+        </div>
+
+        <div class="demo-tabs">
+            <button class="tab active" data-tab="tts">🎙️ Text to Speech</button>
+            <button class="tab" data-tab="audio">📁 Audio Player</button>
+        </div>
+
+        <!-- TEXT TO SPEECH -->
+
+        <div class="demo-panel active" id="ttsPanel">
+
+            <label class="field-label" for="demoText">Enter your text</label>
+
+            <textarea id="demoText" maxlength="1500"
+                placeholder="Type something you want Virtual Voice to say..."></textarea>
+
+            <div class="demo-controls">
+
+                <div class="control-group">
+                    <label class="field-label" for="voiceSelect">Voice</label>
+                    <select id="voiceSelect">
+                        <option value="">Default browser voice</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label class="field-label" for="rate">
+                        Speaking speed
+                    </label>
+                    <input type="range" id="rate" min="0.5" max="2" step="0.1" value="1">
+                    <span class="range-value" id="rateValue">1.0x</span>
+                </div>
+
+            </div>
+
+            <div class="demo-buttons">
+                <button class="demo-button main" id="speakButton">▶ Speak</button>
+                <button class="demo-button" id="pauseButton">⏸ Pause</button>
+                <button class="demo-button" id="resumeButton">▶ Resume</button>
+                <button class="demo-button" id="stopButton">■ Stop</button>
+            </div>
+
+            <div class="demo-message" id="ttsMessage" aria-live="polite">
+                Enter some text to get started.
+            </div>
+
+        </div>
+
+        <!-- AUDIO PLAYER -->
+
+        <div class="demo-panel" id="audioPanel">
+
+            <label class="field-label">Upload an audio file</label>
+
+            <label class="upload-area" for="audioFile" id="uploadArea" style="display:block;cursor:pointer">
+
+                <div class="upload-icon">📂</div>
+                <strong>Choose an audio file</strong>
+                <p>Click here to browse your device.</p>
+                <p>Supported by your browser: MP3, WAV, OGG and other audio formats.</p>
+
+                <input type="file" id="audioFile" accept="audio/*">
+
+                <div class="file-name" id="fileName"></div>
+
+            </label>
+
+            <audio id="uploadedAudio" controls></audio>
+
+            <div class="control-group upload-volume">
+                <label class="field-label" for="fileVolume">Audio volume</label>
+                <input type="range" id="fileVolume" min="0" max="1" step="0.01" value="0.8">
+                <span class="range-value" id="fileVolumeValue">80%</span>
+            </div>
+
+            <div class="demo-message" id="audioMessage" aria-live="polite">
+                Your uploaded audio plays through your device's audio output.
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- HOW IT WORKS -->
+
+<section id="about" class="reveal">
+
+    <div class="section-heading">
+        <h2>How does it work?</h2>
+        <p>Getting started is simple.</p>
+    </div>
+
+    <div class="steps">
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div>
+                <h3>Enter text or upload audio</h3>
+                <p>Choose what you want Virtual Voice to play.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div>
+                <h3>Generate or play</h3>
+                <p>Turn text into speech or play your uploaded audio.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div>
+                <h3>Choose your audio output</h3>
+                <p>Play through your speakers or use a virtual audio device with the Windows application.</p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- DOWNLOAD -->
+
+<section id="download" class="download-section reveal">
+
+    <div class="download-box">
+
+        <h2>
+            Ready for a new
+            <span class="gradient-text">voice?</span>
+        </h2>
+
+        <p>
+            Virtual Voice is getting ready.
+            Stay tuned for the official release!
+        </p>
+
+        <div class="coming-soon">
+            Windows Installer — Coming Soon
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+<!-- FOOTER -->
+
+<footer>
+
+    <p>© 2026 Virtual Voice. All rights reserved.</p>
+
+    <div class="footer-links">
+        <a href="#about">About</a>
+        <a href="#features">Features</a>
+        <a href="#demo">Try VV</a>
+    </div>
+
+</footer>
+
+<!-- BACKGROUND MUSIC -->
+
+<audio id="bgMusic" loop preload="auto">
+    <source src="bg-music.mp3" type="audio/mpeg">
+</audio>
+
+<div id="musicControls">
+
+    <button id="musicToggle" type="button">🎵 Play Music</button>
+
+    <input
+        id="musicVolume"
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        value="0.2"
+        aria-label="Background music volume"
+    >
+
+</div>
+
+<script>
+
+/* FLOATING PARTICLES */
+
+const particleContainer = document.getElementById("particles");
+
+for (let i = 0; i < 24; i++) {
+    const particle = document.createElement("div");
+    particle.className = "particle";
+    particle.style.left = Math.random() * 100 + "%";
+    particle.style.animationDuration = (9 + Math.random() * 14) + "s";
+    particle.style.animationDelay = (-Math.random() * 20) + "s";
+    particle.style.width = (3 + Math.random() * 5) + "px";
+    particle.style.height = particle.style.width;
+    particleContainer.appendChild(particle);
+}
+
+/* TYPING ANIMATION */
+
+const typedElement = document.getElementById("typedText");
+const phrases = ["voice.", "sound.", "experience."];
+
+let phraseIndex = 0;
+let characterIndex = 0;
+let deleting = false;
+
+function typeAnimation() {
+
+    const phrase = phrases[phraseIndex];
+
+    if (!deleting) {
+        typedElement.textContent = phrase.substring(0, characterIndex + 1);
+        characterIndex++;
+
+        if (characterIndex === phrase.length) {
+            deleting = true;
+            setTimeout(typeAnimation, 1500);
+            return;
+        }
+
+    } else {
+        typedElement.textContent = phrase.substring(0, characterIndex - 1);
+        characterIndex--;
+
+        if (characterIndex === 0) {
+            deleting = false;
+            phraseIndex = (phraseIndex + 1) % phrases.length;
+        }
+    }
+
+    setTimeout(typeAnimation, deleting ? 55 : 110);
+}
+
+typeAnimation();
+
+/* SCROLL REVEAL */
+
+const revealObserver = new IntersectionObserver((entries) => {
+
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            revealObserver.unobserve(entry.target);
+        }
+    });
+
+}, { threshold: 0.12 });
+
+document.querySelectorAll(".reveal").forEach(element => {
+    revealObserver.observe(element);
+});
+
+/* DEMO TABS */
+
+const tabs = document.querySelectorAll(".tab");
+const ttsPanel = document.getElementById("ttsPanel");
+const audioPanel = document.getElementById("audioPanel");
+
+tabs.forEach(tab => {
+
+    tab.addEventListener("click", () => {
+
+        tabs.forEach(item => item.classList.remove("active"));
+        tab.classList.add("active");
+
+        ttsPanel.classList.toggle("active", tab.dataset.tab === "tts");
+        audioPanel.classList.toggle("active", tab.dataset.tab === "audio");
+
+    });
+
+});
+
+/* TEXT TO SPEECH */
+
+const demoText = document.getElementById("demoText");
+const voiceSelect = document.getElementById("voiceSelect");
+const rate = document.getElementById("rate");
+const rateValue = document.getElementById("rateValue");
+const ttsMessage = document.getElementById("ttsMessage");
+const demoStatus = document.getElementById("demoStatus");
+
+let availableVoices = [];
+
+function loadVoices() {
+
+    if (!("speechSynthesis" in window)) {
+        ttsMessage.textContent = "Your browser does not support speech synthesis.";
+        return;
+    }
+
+    availableVoices = speechSynthesis.getVoices();
+
+    const previousVoice = voiceSelect.value;
+
+    voiceSelect.innerHTML = '<option value="">Default browser voice</option>';
+
+    availableVoices.forEach((voice, index) => {
+
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = voice.name + " (" + voice.lang + ")";
+
+        voiceSelect.appendChild(option);
+
+    });
+
+    if (previousVoice !== "" && availableVoices[Number(previousVoice)]) {
+        voiceSelect.value = previousVoice;
+    }
+
+}
+
+if ("speechSynthesis" in window) {
+    loadVoices();
+    speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+rate.addEventListener("input", () => {
+    rateValue.textContent = Number(rate.value).toFixed(1) + "x";
+});
+
+document.getElementById("speakButton").addEventListener("click", () => {
+
+    if (!("speechSynthesis" in window)) {
+        ttsMessage.textContent = "Speech synthesis is not supported in this browser.";
+        return;
+    }
+
+    const text = demoText.value.trim();
+
+    if (!text) {
+        ttsMessage.textContent = "Please enter some text first.";
+        return;
+    }
+
+    speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    utterance.rate = Number(rate.value);
+
+    if (voiceSelect.value !== "") {
+        utterance.voice = availableVoices[Number(voiceSelect.value)];
+    }
+
+    utterance.onstart = () => {
+        ttsMessage.textContent = "Virtual Voice is speaking...";
+        demoStatus.textContent = "● Speaking";
+    };
+
+    utterance.onend = () => {
+        ttsMessage.textContent = "Finished speaking!";
+        demoStatus.textContent = "● Ready";
+    };
+
+    utterance.onerror = (event) => {
+        ttsMessage.textContent = "Speech error: " + event.error;
+        demoStatus.textContent = "● Error";
+    };
+
+    speechSynthesis.speak(utterance);
+
+});
+
+document.getElementById("pauseButton").addEventListener("click", () => {
+
+    if ("speechSynthesis" in window && speechSynthesis.speaking) {
+        speechSynthesis.pause();
+        ttsMessage.textContent = "Speech paused.";
+        demoStatus.textContent = "● Paused";
+    }
+
+});
+
+document.getElementById("resumeButton").addEventListener("click", () => {
+
+    if ("speechSynthesis" in window && speechSynthesis.paused) {
+        speechSynthesis.resume();
+        ttsMessage.textContent = "Speech resumed.";
+        demoStatus.textContent = "● Speaking";
+    }
+
+});
+
+document.getElementById("stopButton").addEventListener("click", () => {
+
+    if ("speechSynthesis" in window) {
+        speechSynthesis.cancel();
+        ttsMessage.textContent = "Speech stopped.";
+        demoStatus.textContent = "● Ready";
+    }
+
+});
+
+/* AUDIO UPLOAD */
+
+const audioFile = document.getElementById("audioFile");
+const uploadedAudio = document.getElementById("uploadedAudio");
+const fileName = document.getElementById("fileName");
+const audioMessage = document.getElementById("audioMessage");
+const fileVolume = document.getElementById("fileVolume");
+const fileVolumeValue = document.getElementById("fileVolumeValue");
+
+let currentAudioURL = null;
+
+audioFile.addEventListener("change", () => {
+
+    const file = audioFile.files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("audio/")) {
+        audioMessage.textContent = "Please choose a valid audio file.";
+        audioFile.value = "";
+        return;
+    }
+
+    if (currentAudioURL) {
+        URL.revokeObjectURL(currentAudioURL);
+    }
+
+    currentAudioURL = URL.createObjectURL(file);
+
+    uploadedAudio.src = currentAudioURL;
+    uploadedAudio.style.display = "block";
+    uploadedAudio.volume = Number(fileVolume.value);
+
+    fileName.textContent = "Selected: " + file.name;
+    audioMessage.textContent = "Your audio file is ready. Press play to listen!";
+
+    uploadedAudio.play().then(() => {
+        audioMessage.textContent = "Playing your uploaded audio.";
+    }).catch(() => {
+        audioMessage.textContent = "Audio loaded. Press play to listen.";
+    });
+
+});
+
+fileVolume.addEventListener("input", () => {
+
+    uploadedAudio.volume = Number(fileVolume.value);
+    fileVolumeValue.textContent = Math.round(Number(fileVolume.value) * 100) + "%";
+
+});
+
+/* BACKGROUND MUSIC */
+
+const music = document.getElementById("bgMusic");
+const musicToggle = document.getElementById("musicToggle");
+const musicVolume = document.getElementById("musicVolume");
+
+music.volume = Number(musicVolume.value);
+
+let musicEnabled = true;
+
+function updateMusicButton() {
+
+    if (musicEnabled && !music.paused) {
+        musicToggle.textContent = "🎵 Music: ON";
+    } else if (musicEnabled) {
+        musicToggle.textContent = "🎵 Play Music";
+    } else {
+        musicToggle.textContent = "🔇 Music: OFF";
+    }
+
+}
+
+music.play().then(() => {
+    updateMusicButton();
+}).catch(() => {
+    // Browsers may block autoplay until the visitor interacts.
+    updateMusicButton();
+});
+
+musicToggle.addEventListener("click", async () => {
+
+    if (!musicEnabled) {
+        musicEnabled = true;
+        try {
+            await music.play();
+        } catch {
+            musicToggle.textContent = "🎵 Tap to Play";
+            return;
+        }
+    } else {
+        musicEnabled = false;
+        music.pause();
+    }
+
+    updateMusicButton();
+
+});
+
+musicVolume.addEventListener("input", () => {
+
+    music.volume = Number(musicVolume.value);
+
+    if (music.volume === 0 && !music.paused) {
+        music.pause();
+    } else if (musicEnabled && music.paused && music.volume > 0) {
+        music.play().catch(() => updateMusicButton());
+    }
+
+    updateMusicButton();
+
+});
+
+music.addEventListener("error", () => {
+    musicToggle.textContent = "🎵 Music unavailable";
+    musicToggle.disabled = true;
+});
+
+</script>
 
 </body>
 </html>
